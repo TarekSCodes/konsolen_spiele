@@ -50,3 +50,21 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Binäre Dateien und temporäre Verzeichnisse ausschließen
+bin/
+obj/
+
+# Code::Blocks Projektdateien
+*layout*
+*.depend
+*.save
+
+# Backup Dateien
+*~
+*.swp
+*.bak
+
+# Betriebssystemspezifische Dateien
+.DS_Store
+Thumbs.db
