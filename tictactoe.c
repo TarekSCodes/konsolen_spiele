@@ -4,15 +4,15 @@
 #include "eigenefunktionen.h"
 
 void tictactoeStart();
+void neuesSpielfeld();
 void printSpielfeld();
-char spielfeld[3][3] = {
-        {'1', '2', '3'},
-        {'4', '5', '6'},
-        {'7', '8', '9'}
-    };
+bool pruefeSieg(char spielfeld[3][3], char amZug);
+
 
 void tictactoe() {
 
+    char spielfeld[3][3];
+    neuesSpielfeld(spielfeld);
     bildschirmLeeren();
     bool bedingung = true;
     int spielerWechsel = 2;
@@ -27,52 +27,42 @@ void tictactoe() {
     while (bedingung){
 
         fflush(stdout);
+        printSpielfeld(spielfeld);
 
-        // Ausgabe: Spielfeld
-        printSpielfeld();
-
-        // Ausgabe: Welcher Spieler ist am Zug
         char amZug = (spielerWechsel % 2 == 0) ? 'X' : 'O';
         printf("\nSpieler %c du bist am Zug.\n", amZug);
-
-        // Eingabe: Spielfeld Nummer
         printf("Setz dein Symbol, indem du die Position im Raster angibst: ");
-        scanf("%1c", &spielerAuswahl);
+        scanf(" %1c", &spielerAuswahl);
         ioBufferLeeren();
 
         // Array prüfen ob die Auswahl gefunden wurde
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (spielfeld[i][j] == spielerAuswahl) {
-
-                    spielfeld[i][j] = (spielerWechsel % 2 == 0) ? 'X' : '0';
+                    spielfeld[i][j] = amZug;
                     spielerWechsel++;
                 }
             }
         }
 
-        // prüfen ob der Spieler gewonnen hat
-        if (spielfeld[0][0] == 'X' && spielfeld[0][1] == 'X' && spielfeld[0][2] == 'X')
-            break;
-        if (spielfeld[1][0] == 'X' && spielfeld[1][1] == 'X' && spielfeld[1][2] == 'X')
-            break;
-        if (spielfeld[2][0] == 'X' && spielfeld[2][1] == 'X' && spielfeld[2][2] == 'X')
-            break;
-        if (spielfeld[0][0] == 'X' && spielfeld[1][1] == 'X' && spielfeld[2][2] == 'X')
-            break;
-        if (spielfeld[0][2] == 'X' && spielfeld[1][1] == 'X' && spielfeld[2][0] == 'X')
-            break;
+
+        if  (pruefeSieg(spielfeld, amZug)) {
+
+            bildschirmLeeren();
+            printSpielfeld(spielfeld);
+            printf("\nSpieler %c hat gewonnen!\n", amZug);
+            pauseProgramm(2);
+            printf("\nMöchtest du noch einmal spielen?\n");
+            bedingung = jaOderNeinAbfrage();
+            if (bedingung) {
+                neuesSpielfeld(spielfeld);
+                spielerWechsel = 2;
+            }
+        }
 
         bildschirmLeeren();
-
-
-
     }
-
-    bildschirmLeeren();
-
 }
-
 
 void tictactoeStart() {
 
@@ -89,7 +79,23 @@ void tictactoeStart() {
 }
 
 
-void printSpielfeld() {
+void neuesSpielfeld(char spielfeld[3][3]) {
+
+    char initial[3][3] = {
+        {'1', '2', '3'},
+        {'4', '5', '6'},
+        {'7', '8', '9'}
+    };
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            spielfeld[i][j] = initial[i][j];
+        }
+    }
+}
+
+
+void printSpielfeld(char spielfeld[3][3]) {
 
     printf("\n");
     printf("\t %c | %c | %c \n", spielfeld[0][0], spielfeld[0][1], spielfeld[0][2]);
@@ -99,4 +105,16 @@ void printSpielfeld() {
     printf("\t %c | %c | %c \n", spielfeld[2][0], spielfeld[2][1], spielfeld[2][2]);
 }
 
+
+bool pruefeSieg(char spielfeld[3][3], char amZug) {
+
+    return ((spielfeld[0][0] == amZug && spielfeld[0][1] == amZug && spielfeld[0][2] == amZug) ||
+            (spielfeld[1][0] == amZug && spielfeld[1][1] == amZug && spielfeld[1][2] == amZug) ||
+            (spielfeld[2][0] == amZug && spielfeld[2][1] == amZug && spielfeld[2][2] == amZug) ||
+            (spielfeld[0][0] == amZug && spielfeld[1][0] == amZug && spielfeld[2][0] == amZug) ||
+            (spielfeld[0][1] == amZug && spielfeld[1][1] == amZug && spielfeld[2][1] == amZug) ||
+            (spielfeld[0][2] == amZug && spielfeld[1][2] == amZug && spielfeld[2][2] == amZug) ||
+            (spielfeld[0][0] == amZug && spielfeld[1][1] == amZug && spielfeld[2][2] == amZug) ||
+            (spielfeld[0][2] == amZug && spielfeld[1][1] == amZug && spielfeld[2][0] == amZug));
+}
 
