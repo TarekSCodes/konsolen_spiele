@@ -25,7 +25,7 @@ void hangman() {
     //int counter = 0;
     srand(time(NULL));
 
-    // Zeigt die Anleitung und startet einen Countdown bis zum Start.
+    // Zeigt die Anleitung und wartet auf eine Enter Eingabe zum starten.
     hangmanStart();
 
     bildschirmLeeren();

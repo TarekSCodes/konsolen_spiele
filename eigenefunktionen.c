@@ -27,6 +27,7 @@ int hauptMenu() {
         printf("Du kannst zum Zeitvertreib aus verschiedenen Spielen auswählen.\n\n");
 
         printf("[1] Hangman\n");
+        printf("[2] Tic-Tac-Toe\n");
         printf("[0] Zum Beenden des Programms\n");
 
 
@@ -47,6 +48,9 @@ void spielStarten(int spielAuswahl) {
     switch(spielAuswahl) {
     case 1:
         hangman();
+        break;
+    case 2:
+        tictactoe();
         break;
     }
 }

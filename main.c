@@ -36,6 +36,7 @@ int main()
 
     bildschirmLeeren();
     printf("Auf Wiedersehen bis zum nächsten mal. :)\n");
+    getchar();
 
 
     return 0;

@@ -12,6 +12,7 @@
 int hauptMenu();
 void spielStarten(int spielAuswahl);
 void hangman();
+void tictactoe();
 
 void pauseProgramm(int sekunden);
 void bildschirmLeeren();
