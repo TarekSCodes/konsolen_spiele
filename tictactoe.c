@@ -1,24 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "eigenefunktionen.h"
 
 void tictactoeStart();
-void neuesSpielfeld();
-void printSpielfeld();
+void neuesSpielfeld(char spielfeld[3][3]);
+void printSpielfeld(char spielfeld[3][3]);
 bool pruefeSieg(char spielfeld[3][3], char amZug);
+bool spielfeldVoll(char spielfeld[3][3]);
 
 
 void tictactoe() {
 
     char spielfeld[3][3];
-    neuesSpielfeld(spielfeld);
-    bildschirmLeeren();
     bool bedingung = true;
+    neuesSpielfeld(spielfeld);
     int spielerWechsel = 2;
     char spielerAuswahl;
 
     // Zeigt die Anleitung und wartet auf eine Enter Eingabe zum starten.
+    bildschirmLeeren();
     tictactoeStart();
     bildschirmLeeren();
 
@@ -45,24 +47,38 @@ void tictactoe() {
             }
         }
 
-
+        // Hier prüft das Programm ob ein Spieler gewonnen hat
+        // oder ob das Spielfeld voll ist ohne das jemand gewonnen hat
+        // trifft beides nicht zu, startet ein neuer Durchlauf der while Schleife
         if  (pruefeSieg(spielfeld, amZug)) {
 
             bildschirmLeeren();
             printSpielfeld(spielfeld);
             printf("\nSpieler %c hat gewonnen!\n", amZug);
-            pauseProgramm(2);
-            printf("\nMöchtest du noch einmal spielen?\n");
-            bedingung = jaOderNeinAbfrage();
-            if (bedingung) {
-                neuesSpielfeld(spielfeld);
-                spielerWechsel = 2;
-            }
+
+        } else if (spielfeldVoll(spielfeld)) {
+
+            bildschirmLeeren();
+            printSpielfeld(spielfeld);
+            printf("\nDas Spielfeld ist voll, niemand hat gewonnen.\n");
+
+        } else {
+
+            bildschirmLeeren();
+            continue;
         }
 
+        pauseProgramm(2);
+        printf("\nMöchtest du noch einmal spielen? (j/n)\n");
+        bedingung = jaOderNeinAbfrage();
+        if (bedingung) {
+            neuesSpielfeld(spielfeld);
+            spielerWechsel = 2;
+        }
         bildschirmLeeren();
     }
 }
+
 
 void tictactoeStart() {
 
@@ -118,3 +134,15 @@ bool pruefeSieg(char spielfeld[3][3], char amZug) {
             (spielfeld[0][2] == amZug && spielfeld[1][1] == amZug && spielfeld[2][0] == amZug));
 }
 
+
+bool spielfeldVoll(char spielfeld[3][3]) {
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (spielfeld[i][j] >= '1' && spielfeld[i][j] <= '9') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
