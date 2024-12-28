@@ -21,10 +21,25 @@ void hangman() {
 
     bool bedingung = true;
     char spielerAuswahl;
+
+    // Erstellen eines Zufallswortes, ermitteln der Wortlänge und erstellen eines Arrays mit _
     srand(time(NULL));
-    // TODO Zufallswort auswählen
-    // TODO String Array, mit hangman Darstellungsschritten
-    //int counter = 0;
+    char *zufallswort = nomen[rand() % (sizeof(nomen) / sizeof(nomen[0]))];
+    int wortLaenge = strlen(zufallswort);
+    char verdecktesWort[wortLaenge];
+    for (int i = 0; i < wortLaenge; i++) {
+        verdecktesWort[i] = '_';
+    }
+
+    char *spielstandHangman[] = {
+    "     \n     \n     \n     \n     \n     \n",
+    "     \n    |\n    |\n    |\n    |\n____|\n",
+    "     ______\n    |\n    |\n    |\n    |\n____|\n",
+    "     ______\n    |     |\n    |     O\n    |\n    |\n____|\n",
+    "     ______\n    |     |\n    |     O\n    |    /|\\\n    |\n____|\n",
+    "     ______\n    |     |\n    |     O\n    |    /|\\\n    |    / \\\n____|\n"
+    };
+    int spielstandCounter = 0;
 
     // Zeigt die Anleitung und wartet auf eine Enter Eingabe zum starten.
     bildschirmLeeren();
@@ -36,21 +51,31 @@ void hangman() {
     while (bedingung){
 
         fflush(stdout);
-        // TODO Word verdeckt anzeigen
-        // TODO User eingabe
+        printf("%s", zufallswort);
+        printf("%s", spielstandHangman[spielstandCounter]);
+        for (int i = 0; i < wortLaenge; i++) {
+
+            printf("%c ", verdecktesWort[i]);
+        }
+
+        printf("\n\nGib einen Buchstaben ein: ");
+        scanf(" %c", &spielerAuswahl);
+
         // TODO EINGABE prüfen ob im Wort vorhanden
         // TODO WENN vorhanden Strich durch Buchstaben austauschen
         // TODO SONST, counter erhöhen und hangman zeichnen
+        for (int i = 0; i < wortLaenge; i++) {
+            if (zufallswort[i] == spielerAuswahl) {
+                verdecktesWort[i] = spielerAuswahl;
+            }
+        }
 
 
+        //bedingung = jaOderNeinAbfrage();
 
-        bedingung = jaOderNeinAbfrage();
 
-
+        bildschirmLeeren();
     }
-
-    bildschirmLeeren();
-
 }
 
 
@@ -65,17 +90,6 @@ void hangmanStart() {
     printf("Drücke die Enter Taste zum Starten...");
     getchar();
 }
-
-/*
-const char* getZufaelligenNomen() {
-
-    //const char *zufallsNomen =
-
-    return zufallsNomen;
-}
-*/
-
-
 
 
 
