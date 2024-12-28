@@ -19,21 +19,31 @@ const char* getZufaelligenNomen();
 
 void hangman() {
 
-    bildschirmLeeren();
-
     bool bedingung = true;
-    //int counter = 0;
+    char spielerAuswahl;
     srand(time(NULL));
+    // TODO Zufallswort auswählen
+    // TODO String Array, mit hangman Darstellungsschritten
+    //int counter = 0;
 
     // Zeigt die Anleitung und wartet auf eine Enter Eingabe zum starten.
-    hangmanStart();
-
     bildschirmLeeren();
+    hangmanStart();
+    bildschirmLeeren();
+
 
     // Hier beginnt das eigentliche Spiel.
     while (bedingung){
 
         fflush(stdout);
+        // TODO Word verdeckt anzeigen
+        // TODO User eingabe
+        // TODO EINGABE prüfen ob im Wort vorhanden
+        // TODO WENN vorhanden Strich durch Buchstaben austauschen
+        // TODO SONST, counter erhöhen und hangman zeichnen
+
+
+
         bedingung = jaOderNeinAbfrage();
 
 
