@@ -1,21 +1,24 @@
 #ifndef EIGENEFUNKTIONEN_H
 #define EIGENEFUNKTIONEN_H
 
+/* Damit lasse ich den Präprozessor prüfen ob
+ * das OS Windows ist oder Linux.
+ * Jenachdem werden unterschiedliche #include benötigt und eingebunden.
+ */
 #ifdef _Win32
     #include <windows.h>
-    #define OS_WINDOWS 1
-#else
+    #define bildschirmLeeren() system("cls")
+    #define pauseProgramm() Sleep((sekunden) * 1000)
+#elif __linux__ && __unix__
     #include <unistd.h>
-    #define OS_WINDOWS 0
+    #define bildschirmLeeren(sekunden) system("clear")
+    #define pauseProgramm(sekunden) sleep(sekunden)
 #endif
 
 int hauptMenu();
 void spielStarten(int spielAuswahl);
 void hangman();
 void tictactoe();
-
-void pauseProgramm(int sekunden);
-void bildschirmLeeren();
 void ioBufferLeeren();
 bool jaOderNeinAbfrage();
 

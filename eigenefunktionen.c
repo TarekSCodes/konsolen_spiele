@@ -1,20 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-
 #include "eigenefunktionen.h"
-
-/* Damit lasse ich den Präprozessor prüfen ob
- * das OS Windows ist oder Linux.
- * Jenachdem werden unterschiedliche #include benötigt und eingebunden.
- */
-#ifdef _Win32
-    #include <windows.h>
-    #define OS_WINDOWS 1
-#else
-    #include <unistd.h>
-    #define OS_WINDOWS 0
-#endif
 
 
 int hauptMenu() {
@@ -52,26 +39,6 @@ void spielStarten(int spielAuswahl) {
     case 2:
         tictactoe();
         break;
-    }
-}
-
-
-void pauseProgramm(int sekunden) {
-
-    if (OS_WINDOWS == 1)
-        Sleep(sekunden * 1000);
-    else
-        sleep(sekunden);
-}
-
-
-void bildschirmLeeren() {
-
-    if (OS_WINDOWS == 1) {
-        system("cls");
-    }
-    else {
-        system("clear");
     }
 }
 
