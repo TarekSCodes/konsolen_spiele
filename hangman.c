@@ -3,33 +3,33 @@
 #include <stdbool.h>
 #include <time.h>
 #include <string.h>
+#include <ctype.h>
 #include "eigenefunktionen.h"
 
 const char *nomen[] = {
-    "Abendessen", "Abenteuer", "Bauernhof", "Bergsteigen", "Blumenstrauß",
-    "Dachgepäck", "Eisenbahn", "Flughafen", "Freizeit", "Gesellschaft",
-    "Handschuhe", "Hausaufgaben", "Hochschule", "Katzenfutter", "Lebensmittel",
-    "Lichtquelle", "Luftmatratze", "Mülltonne", "Nachtisch", "Obstgarten",
-    "Pflanzenwelt", "Regenbogen", "Schmetterling", "Schrankwand", "Spiegelbild",
-    "Straßenbahn", "Streichholz", "Taschenlampe", "Waldwanderung", "Zahnarztpraxis"
+    "ABENDESSEN", "ABENTEUER", "BAUERNHOF", "BERGSTEIGEN", "BLUMENSTRAUSS",
+    "DACHGEPAECK", "EISENBAHN", "FLUGHAFEN", "FREIZEIT", "GESELLSCHAFT",
+    "HANDSCHUHE", "HAUSAUFGABEN", "HOCHSCHULE", "KATZENFUTTER", "LEBENSMITTEL",
+    "LICHTQUELLE", "LUFTMATRATZE", "MUELLTONNE", "NACHTISCH", "OBSTGARTEN",
+    "PFLANZENWELT", "REGENBOGEN", "SCHMETTERLING", "SCHRANKWAND", "SPIEGELBILD",
+    "STRASSENBAHN", "STREICHHOLZ", "TASCHENLAMPE", "WALDWANDERUNG", "ZAHNARZTPRAXIS",
+    "AUTOBAN", "BAUMHAUS", "DELFIN", "ELEFANT", "FALKE", "GIRAFFE", "HEMD", "IKONE",
+    "JAGD", "KAMEL", "LÖWE", "MAULWURF", "NINJA", "PFERD", "QUALLEN", "TIGER",
+    "UNGEHEUER", "WOLF", "XYLOPHON", "YAK", "ZEBRA"
 };
 void hangmanStart();
 const char* getZufaelligenNomen();
+void createVerdecktesWort(const char* wort, char* verdecktesWort);
 
 
 void hangman() {
 
-    bool bedingung = true;
-    char spielerAuswahl;
-
     // Erstellen eines Zufallswortes, ermitteln der Wortlänge und erstellen eines Arrays mit _
     srand(time(NULL));
-    char *zufallswort = nomen[rand() % (sizeof(nomen) / sizeof(nomen[0]))];
-    int wortLaenge = strlen(zufallswort);
-    char verdecktesWort[wortLaenge];
-    for (int i = 0; i < wortLaenge; i++) {
-        verdecktesWort[i] = '_';
-    }
+    char *zufallswort = getZufaelligenNomen();
+    char verdecktesWort[strlen(zufallswort)];
+    createVerdecktesWort(zufallswort, verdecktesWort);
+
 
     char *spielstandHangman[] = {
     "     \n     \n     \n     \n     \n     \n",
@@ -40,6 +40,8 @@ void hangman() {
     "     ______\n    |     |\n    |     O\n    |    /|\\\n    |    / \\\n____|\n"
     };
     int spielstandCounter = 0;
+    bool bedingung = true;
+    char spielerAuswahl;
 
     // Zeigt die Anleitung und wartet auf eine Enter Eingabe zum starten.
     bildschirmLeeren();
@@ -53,8 +55,7 @@ void hangman() {
         fflush(stdout);
         printf("%s", zufallswort);
         printf("%s", spielstandHangman[spielstandCounter]);
-        for (int i = 0; i < wortLaenge; i++) {
-
+        for (int i = 0; i < strlen(zufallswort); i++) {
             printf("%c ", verdecktesWort[i]);
         }
 
@@ -63,16 +64,33 @@ void hangman() {
 
         // TODO EINGABE prüfen ob im Wort vorhanden
         // TODO WENN vorhanden Strich durch Buchstaben austauschen
-        // TODO SONST, counter erhöhen und hangman zeichnen
-        for (int i = 0; i < wortLaenge; i++) {
-            if (zufallswort[i] == spielerAuswahl) {
-                verdecktesWort[i] = spielerAuswahl;
+        bool gefunden = false;
+        for (int i = 0; i < strlen(zufallswort); i++) {
+            if (zufallswort[i] == toupper(spielerAuswahl)) {
+                verdecktesWort[i] = toupper(spielerAuswahl);
+                gefunden = true;
             }
         }
+        // TODO SONST, counter erhöhen und hangman zeichnen
+        if (!gefunden) {
+            spielstandCounter++;
+        } else {
+            // TODO
+            // WENN kein _ mehr im array ist
+            // Gewonnen, Spiel beenden
+            // printf("Glückwunsch! Du hast gewonnen.");
+        }
 
-
+        //pauseProgramm(2);
+        //printf("\nMöchtest du noch einmal spielen? (j/n)\n");
         //bedingung = jaOderNeinAbfrage();
 
+        if (bedingung) {
+            // TODO
+            // Neues Wort auswählen
+            // spielstandCounter = 0
+            // neues Array mit _ _ _
+        }
 
         bildschirmLeeren();
     }
@@ -92,5 +110,17 @@ void hangmanStart() {
 }
 
 
+const char* getZufaelligenNomen() {
+
+    return nomen[rand() % (sizeof(nomen) / sizeof(nomen[0]))];
+}
+
+void createVerdecktesWort(const char* wort, char* verdecktesWort) {
+
+    int wortLaenge = strlen(wort);
+    for (int i = 0; i < wortLaenge; i++) {
+        verdecktesWort[i] = '_';
+    }
+}
 
 
