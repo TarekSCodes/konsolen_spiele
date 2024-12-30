@@ -41,6 +41,9 @@
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="scheresteinpapier.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="tictactoe.c">
 			<Option compilerVar="CC" />
 		</Unit>

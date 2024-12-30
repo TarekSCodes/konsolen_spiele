@@ -7,20 +7,21 @@
 #include "eigenefunktionen.h"
 
 const char *nomen[] = {
-    "ABENDESSEN", "ABENTEUER", "BAUERNHOF", "BERGSTEIGEN", "BLUMENSTRAUSS",
-    "DACHGEPAECK", "EISENBAHN", "FLUGHAFEN", "FREIZEIT", "GESELLSCHAFT",
-    "HANDSCHUHE", "HAUSAUFGABEN", "HOCHSCHULE", "KATZENFUTTER", "LEBENSMITTEL",
-    "LICHTQUELLE", "LUFTMATRATZE", "MUELLTONNE", "NACHTISCH", "OBSTGARTEN",
-    "PFLANZENWELT", "REGENBOGEN", "SCHMETTERLING", "SCHRANKWAND", "SPIEGELBILD",
-    "STRASSENBAHN", "STREICHHOLZ", "TASCHENLAMPE", "WALDWANDERUNG", "ZAHNARZTPRAXIS",
-    "AUTOBAHN", "BAUMHAUS", "DELFIN", "ELEFANT", "FALKE", "GIRAFFE", "HEMD", "IKONE",
-    "JAGD", "KAMEL", "LÖWE", "MAULWURF", "NINJA", "PFERD", "QUALLEN", "TIGER",
-    "UNGEHEUER", "WOLF", "XYLOPHON", "YAK", "ZEBRA"
+    "ABEND", "ADLER", "ANGEL", "ANZUG", "APFEL", "ARMUT", "BANDE", "BASIS", "BAUER",
+    "BAUM", "BERGE", "BIENE", "BLATT", "BLICK", "BLUME", "BOOT", "BRAND", "BRETT",
+    "BRIEF", "BUCH", "CHAOS", "COUCH", "DECKE", "DIKTAT", "DOSE", "DORF", "EIMER",
+    "ENKEL", "ERBEN", "FALLE", "FAHRT", "FISCH", "FLUSS", "FRAU", "GABEL", "GASSE",
+    "GELD", "GEIST", "GERTE", "GLASS", "GRIFF", "HALLE", "HAFEN", "HELD", "HERD",
+    "HERZ", "HOLZ", "HOTEL", "JACKE", "KERZE", "KISSEN", "KARTE", "LAMPE", "LEBEN",
+    "LINSE", "LOBBY", "MEUTE", "METER", "MILCH", "MONAT", "NADEL", "NOMEN",
+    "NOTEN", "OPFER", "OASE", "PUNKT", "QUARK", "REISE", "SPATZ", "STADT",
+    "STIER", "SOMMER", "TASTE", "TISCH", "TRAUM", "WUNDE", "WINTER", "ZWECK", "ZELT"
 };
 void hangmanStart();
 const char* getZufaelligenNomen();
 void createVerdecktesWort(const char* zufallswort, char* verdecktesWort);
 bool checkEingabe(const char* zufallswort, char* verdecktesWort, char spielerAuswahl);
+void printSpielstand(const char* zufallswort, char* spielstandHangman[], int spielstandCounter, char* verdecktesWort);
 
 
 
@@ -55,14 +56,11 @@ void hangman() {
     while (bedingung){
 
         fflush(stdout);
-        //printf("%s", zufallswort);
-        printf("%s\n", spielstandHangman[spielstandCounter]);
-        for (int i = 0; i < strlen(zufallswort); i++) {
-            printf("%c ", verdecktesWort[i]);
-        }
+        printSpielstand(zufallswort, spielstandHangman, spielstandCounter, verdecktesWort);
 
         printf("\n\nGib einen Buchstaben ein: ");
-        scanf(" %c", &spielerAuswahl);
+        scanf(" %1c", &spielerAuswahl);
+        ioBufferLeeren();
 
         // Hier prüfe ich ob der eingegebene Buchstabe gefunden wurde.
         // Falls ja kommt ein true zurück und die/das '_' Zeichen wurde
@@ -98,7 +96,7 @@ void hangman() {
 
             if (wortGefunden == 0) {
                 bildschirmLeeren();
-                printf("%s", spielstandHangman[spielstandCounter]);
+                printSpielstand(zufallswort, spielstandHangman, spielstandCounter, verdecktesWort);
                 printf("\nGlückwunsch! Du hast gewonnen.\n");
             } else {
                 bildschirmLeeren();
@@ -156,4 +154,15 @@ bool checkEingabe(const char* zufallswort, char* verdecktesWort, char spielerAus
     }
     return fund;
 }
+
+
+void printSpielstand(const char* zufallswort, char* spielstandHangman[], int spielstandCounter, char* verdecktesWort) {
+
+    printf("%s\n", spielstandHangman[spielstandCounter]);
+    for (int i = 0; i < strlen(zufallswort); i++) {
+        printf("%c ", verdecktesWort[i]);
+    }
+}
+
+
 

@@ -15,6 +15,7 @@ int hauptMenu() {
 
         printf("[1] Hangman\n");
         printf("[2] Tic-Tac-Toe\n");
+        printf("[3] Schere-Stein-Papier\n");
         printf("[0] Zum Beenden des Programms\n");
 
 
@@ -38,6 +39,9 @@ void spielStarten(int spielAuswahl) {
         break;
     case 2:
         tictactoe();
+        break;
+    case 3:
+        scheresteinpapier();
         break;
     }
 }
