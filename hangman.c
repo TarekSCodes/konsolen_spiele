@@ -13,13 +13,15 @@ const char *nomen[] = {
     "LICHTQUELLE", "LUFTMATRATZE", "MUELLTONNE", "NACHTISCH", "OBSTGARTEN",
     "PFLANZENWELT", "REGENBOGEN", "SCHMETTERLING", "SCHRANKWAND", "SPIEGELBILD",
     "STRASSENBAHN", "STREICHHOLZ", "TASCHENLAMPE", "WALDWANDERUNG", "ZAHNARZTPRAXIS",
-    "AUTOBAN", "BAUMHAUS", "DELFIN", "ELEFANT", "FALKE", "GIRAFFE", "HEMD", "IKONE",
+    "AUTOBAHN", "BAUMHAUS", "DELFIN", "ELEFANT", "FALKE", "GIRAFFE", "HEMD", "IKONE",
     "JAGD", "KAMEL", "LÖWE", "MAULWURF", "NINJA", "PFERD", "QUALLEN", "TIGER",
     "UNGEHEUER", "WOLF", "XYLOPHON", "YAK", "ZEBRA"
 };
 void hangmanStart();
 const char* getZufaelligenNomen();
-void createVerdecktesWort(const char* wort, char* verdecktesWort);
+void createVerdecktesWort(const char* zufallswort, char* verdecktesWort);
+bool checkEingabe(const char* zufallswort, char* verdecktesWort, char spielerAuswahl);
+
 
 
 void hangman() {
@@ -53,8 +55,8 @@ void hangman() {
     while (bedingung){
 
         fflush(stdout);
-        printf("%s", zufallswort);
-        printf("%s", spielstandHangman[spielstandCounter]);
+        //printf("%s", zufallswort);
+        printf("%s\n", spielstandHangman[spielstandCounter]);
         for (int i = 0; i < strlen(zufallswort); i++) {
             printf("%c ", verdecktesWort[i]);
         }
@@ -62,40 +64,59 @@ void hangman() {
         printf("\n\nGib einen Buchstaben ein: ");
         scanf(" %c", &spielerAuswahl);
 
-        // TODO EINGABE prüfen ob im Wort vorhanden
-        // TODO WENN vorhanden Strich durch Buchstaben austauschen
-        bool gefunden = false;
-        for (int i = 0; i < strlen(zufallswort); i++) {
-            if (zufallswort[i] == toupper(spielerAuswahl)) {
-                verdecktesWort[i] = toupper(spielerAuswahl);
-                gefunden = true;
-            }
-        }
-        // TODO SONST, counter erhöhen und hangman zeichnen
+        // Hier prüfe ich ob der eingegebene Buchstabe gefunden wurde.
+        // Falls ja kommt ein true zurück und die/das '_' Zeichen wurde
+        // durch den Buchstaben ersetzt
+        bool gefunden = checkEingabe(zufallswort, verdecktesWort, spielerAuswahl);
+
+        // Ab hier nutze ich die Information ob ein Buchstabe gefunden wurde
+        // Im ersten Abschnitt folgt was passieren soll wenn nicht
         if (!gefunden) {
             spielstandCounter++;
+
+            if (spielstandCounter == 5) {
+
+                bildschirmLeeren();
+                printf("%s", spielstandHangman[spielstandCounter]);
+                printf("\nDer Hangman baumelt. Leider verloren!\n");
+                printf("Das gesuchte Wort lautete: %s\n", zufallswort);
+            } else {
+                bildschirmLeeren();
+                continue;
+            }
+
+        // Ab hier kommt die Logik was passieren soll falls der Buchstabe gefunden wurde
         } else {
-            // TODO
-            // WENN kein _ mehr im array ist
-            // Gewonnen, Spiel beenden
-            // printf("Glückwunsch! Du hast gewonnen.");
+            // Prüfen ob noch '_' im Array sind, wenn nicht wurde das gesamte Wort gefunden
+            int wortGefunden = 0;
+            for (int i = 0; i < strlen(verdecktesWort); i++) {
+                if (verdecktesWort[i] == '_') {
+                    wortGefunden++;
+                }
+            }
+
+
+            if (wortGefunden == 0) {
+                bildschirmLeeren();
+                printf("%s", spielstandHangman[spielstandCounter]);
+                printf("\nGlückwunsch! Du hast gewonnen.\n");
+            } else {
+                bildschirmLeeren();
+                continue;
+            }
         }
 
-        //pauseProgramm(2);
-        //printf("\nMöchtest du noch einmal spielen? (j/n)\n");
-        //bedingung = jaOderNeinAbfrage();
-
+        pauseProgramm(2);
+        printf("\nMöchtest du noch einmal spielen? (j/n)\n");
+        bedingung = jaOderNeinAbfrage();
         if (bedingung) {
-            // TODO
-            // Neues Wort auswählen
-            // spielstandCounter = 0
-            // neues Array mit _ _ _
+            spielstandCounter = 0;
+            zufallswort = getZufaelligenNomen();
+            createVerdecktesWort(zufallswort, verdecktesWort);
         }
-
         bildschirmLeeren();
     }
 }
-
 
 void hangmanStart() {
 
@@ -115,12 +136,24 @@ const char* getZufaelligenNomen() {
     return nomen[rand() % (sizeof(nomen) / sizeof(nomen[0]))];
 }
 
-void createVerdecktesWort(const char* wort, char* verdecktesWort) {
 
-    int wortLaenge = strlen(wort);
-    for (int i = 0; i < wortLaenge; i++) {
+void createVerdecktesWort(const char* zufallswort, char* verdecktesWort) {
+
+    for (int i = 0; i < strlen(zufallswort); i++) {
         verdecktesWort[i] = '_';
     }
 }
 
+
+bool checkEingabe(const char* zufallswort, char* verdecktesWort, char spielerAuswahl) {
+
+    bool fund = false;
+    for (int i = 0; i < strlen(zufallswort); i++) {
+        if (zufallswort[i] == toupper(spielerAuswahl)) {
+            verdecktesWort[i] = toupper(spielerAuswahl);
+            fund = true;
+        }
+    }
+    return fund;
+}
 
