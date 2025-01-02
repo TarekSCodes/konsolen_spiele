@@ -5,13 +5,13 @@
  * das OS Windows ist oder Linux.
  * Jenachdem werden unterschiedliche #include benötigt und eingebunden.
  */
-#ifdef _Win32
+#ifdef _WIN32
     #include <windows.h>
     #define bildschirmLeeren() system("cls")
-    #define pauseProgramm() Sleep((sekunden) * 1000)
+    #define pauseProgramm(sekunden) Sleep((sekunden) * 1000)
 #elif __linux__ && __unix__
     #include <unistd.h>
-    #define bildschirmLeeren(sekunden) system("clear")
+    #define bildschirmLeeren() system("clear")
     #define pauseProgramm(sekunden) sleep(sekunden)
 #endif
 
