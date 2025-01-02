@@ -6,6 +6,7 @@
 
 int main()
 {
+    setzeZeichencodierung();
     bool bedingung = true;
 
     /* Hauptschleife, hier passiert die ganze Magie, die die App am laufen hält.

@@ -9,10 +9,12 @@
     #include <windows.h>
     #define bildschirmLeeren() system("cls")
     #define pauseProgramm(sekunden) Sleep((sekunden) * 1000)
+    #define setzeZeichencodierung() system("chcp 65001 > nul")
 #elif __linux__ && __unix__
     #include <unistd.h>
     #define bildschirmLeeren() system("clear")
     #define pauseProgramm(sekunden) sleep(sekunden)
+    #define setzeZeichencodierung()
 #endif
 
 int hauptMenu();
