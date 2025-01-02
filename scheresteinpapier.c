@@ -31,11 +31,22 @@ void scheresteinpapier() {
         printf("[2] Stein\n");
         printf("[3] Papier\n");
         printf("\nWähle deine Waffe: ");
-        scanf("%1d", &spielerAuswahl);
-// TODO (tarek#1#): Eingabe auf gültigkeit prüfen um Absturz bei Falscheingabe zu verhindern
+
+        // TODO (tarek#1#): In eigene Funktion implementieren
+        int result;
+        do {
+            result = scanf("%1d", &spielerAuswahl);
+            ioBufferLeeren();
+
+            if (spielerAuswahl < 1 || spielerAuswahl > 3 || result != 1) {
+                printf("Ungültige Eingabe. Bitte wähle eine der Zahlen von 1-3: ");
+            } else {
+                break;
+            }
+
+        } while (true);
 
         printf("\nDu wählst: %s\n", symbole[spielerAuswahl - 1]);
-        ioBufferLeeren();
 
         npcAuswahl = rand() % 3;
         printf("Der NPC wählt: %s\n\n", symbole[npcAuswahl]);
