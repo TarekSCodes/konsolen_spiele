@@ -47,6 +47,9 @@
 		<Unit filename="tictactoe.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="zahlenraten.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

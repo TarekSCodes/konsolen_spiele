@@ -54,8 +54,8 @@ void zahlenraten() {
             printf("\nMöchtest du noch einmal spielen? (j/n)\n");
             bedingung = jaOderNeinAbfrage();
             if (bedingung) {
-                zufallsZahl = (rand() % 100) + 1; // Neue Zufallszahl
-                versuche = 0;                    // Versuche zurücksetzen
+                zufallsZahl = (rand() % 100) + 1;
+                versuche = 0;
                 bildschirmLeeren();
             }
         }
