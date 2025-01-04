@@ -1,6 +1,8 @@
 #ifndef EIGENEFUNKTIONEN_H
 #define EIGENEFUNKTIONEN_H
 
+#include <stdbool.h>
+
 /* Damit lasse ich den Präprozessor prüfen ob
  * das OS Windows ist oder Linux.
  * Jenachdem werden unterschiedliche #include benötigt und eingebunden.
@@ -21,6 +23,7 @@ int hauptMenu();
 void spielStarten(int spielAuswahl);
 void hangman();
 void tictactoe();
+void blackjack();
 void ioBufferLeeren();
 bool jaOderNeinAbfrage();
 
