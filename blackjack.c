@@ -4,22 +4,11 @@
 #include "eigenefunktionen.h"
 
 
-// Array mit 52 karten - 2 bis A
-const int DECKGROEßE = 52;
-char kartenWerte[] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
-                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
-                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
-                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A'};
-char kartenDeck[] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
-                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
-                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
-                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A'};
-int arrayGroeße = sizeof(kartenDeck) / sizeof(char);
 
 // Der Fisher-Yates-Algorithmus
-void kartenDeckMischen(char deck[]) {
+void kartenDeckMischen(int deck[]) {
 
-    for (int i = DECKGROEßE - 1; i >= 1; i--) {
+    for (int i = DECKGROESSE - 1; i >= 1; i--) {
 
         int j = rand() % (i + 1);
 
@@ -30,11 +19,31 @@ void kartenDeckMischen(char deck[]) {
 }
 
 
+int zieheKarte(int deck[], int *groesse) {
+
+    int karte = deck[*groesse - 1];
+    (*groesse)--;
+    return karte;
+}
+
+
 void blackjack() {
 
+    // Array mit 52 karten - 2 bis A
+    const int DECKGROESSE = 52;
+    int kartenWerte[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+                         2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+                         2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+                         2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11};
+    int kartenDeck[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+                        2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+                        2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
+                        2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11};
+    int arrayGroesse = sizeof(kartenDeck) / sizeof(int);
     srand(time(NULL));
     rand();
 
+    kartenDeckMischen(kartenDeck);
     int spielerAnzahl = 1;
     int spielerKontostand = 1000;
     int spielerEinsatz;
@@ -42,6 +51,10 @@ void blackjack() {
     // 0 raus
     // 1 im spiel
     bool bedingung = true;
+    int spielerBlatt[DECKGROESSE];
+    int dealerBlatt[DECKGROESSE];
+    int spielerKartenAnzahl = 0;
+    int dealerKartenAnzahl = 0;
 
 
     while (bedingung) {
@@ -56,10 +69,11 @@ void blackjack() {
         scanf("%10d", &spielerEinsatz);
         ioBufferLeeren();
 
-        kartenDeckMischen(kartenDeck);
 
         // jedem spieler werden 2 karten vom ende des arrays zugewiesen
             // spielerBlatt muss ein Array sein dem die aktuellen spielerkarten hinzugefügt werden
+        int test = zieheKarte(kartenDeck, &arrayGroesse);
+
 
         // dem dealer eine offene und eine verdeckte
             // dealerBlatt muss ein Array sein dem die aktuellen spielerkarten hinzugefügt werden
@@ -77,7 +91,7 @@ void blackjack() {
                 // ausser dealer macht auch == 21
 
         // nun haben alle spieler ausser die mit blackjack oder zu viel, 4 optionen
-        printf("Was möchtest du jetzt machen?\n\n");
+        printf("\nWas möchtest du jetzt machen?\n\n");
 
         printf("[1] Karte\n");
         printf("[2] Halten\n");
@@ -136,6 +150,8 @@ void blackjack() {
         bedingung = jaOderNeinAbfrage();
         if (bedingung) {
             // spielerblatt & dealerBlatt = 0
+            //spielerBlatt = 0;
+            //dealerBlatt = 0;
             // Array wieder komplettieren und mischen
             // spielerAnzahl = 0
             // spielerStatus = 0
