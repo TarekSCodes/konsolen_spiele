@@ -3,26 +3,41 @@
 #include <string.h>
 #include "eigenefunktionen.h"
 
+
 // Array mit 52 karten - 2 bis A
+const int DECKGROEßE = 52;
 char kartenWerte[] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
                       '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
                       '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
                       '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A'};
+char kartenDeck[] = {'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
+                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
+                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A',
+                      '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'B', 'D', 'K', 'A'};
+int arrayGroeße = sizeof(kartenDeck) / sizeof(char);
 
-// Der Fisher-Yates-Algorithmus Funktion
-// zum mischen des Kartendecks
+// Der Fisher-Yates-Algorithmus
+void kartenDeckMischen(char deck[]) {
 
+    for (int i = DECKGROEßE - 1; i >= 1; i--) {
 
-srand(time(NULL));
-rand();
+        int j = rand() % (i + 1);
+
+        int temp = deck[i];
+        deck[i] = deck[j];
+        deck[j] = temp;
+    }
+}
+
 
 void blackjack() {
 
-    // zufallszahl wird genutzt um array neu zu sortieren und zwar nach jeder runde
+    srand(time(NULL));
+    rand();
 
-    unsigned int spielerAnzahl = 1;
+    int spielerAnzahl = 1;
     int spielerKontostand = 1000;
-    unsigned int spielerEinsatz;
+    int spielerEinsatz;
     int spielerStatus = 0; // noch im Spiel oder schon raus?
     // 0 raus
     // 1 im spiel
@@ -40,6 +55,8 @@ void blackjack() {
         printf("Bitte mach deinen Einsatz: ");
         scanf("%10d", &spielerEinsatz);
         ioBufferLeeren();
+
+        kartenDeckMischen(kartenDeck);
 
         // jedem spieler werden 2 karten vom ende des arrays zugewiesen
             // spielerBlatt muss ein Array sein dem die aktuellen spielerkarten hinzugefügt werden
