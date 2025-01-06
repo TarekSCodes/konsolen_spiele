@@ -4,7 +4,6 @@
 #include "eigenefunktionen.h"
 
 #define DECKGROESSE 52
-//const int DECKGROESSE = 52;
 
 // Der Fisher-Yates-Algorithmus
 void kartenDeckMischen(int deck[]) {
@@ -30,21 +29,30 @@ int zieheKarte(int deck[], int *groesse) {
 
 static void printSpielstand(int blatt[], int *blattWert) {
 
-    // Anzeigen der Spielerkarten
+    *blattWert = 0;
+    printf("\t");
+
     for (int i = 0; i < DECKGROESSE; i++) {
         if (blatt[i] != 0) {
 
-        *blattWert += blatt[i];
-        printf("%d ", blatt[i]);
+            *blattWert += blatt[i];
+            printf("%d ", blatt[i]);
         }
     }
-    printf("\n[%d]\n", *blattWert);
+    printf("\n\t[%d]\n", *blattWert);
+
 }
 
 
+void arrayNullen(int *blattArray) {
+
+    for (int i = 0; i < DECKGROESSE; i++) {
+        blattArray[i] = 0;
+    }
+}
+
 void blackjack() {
 
-    // Array mit 52 karten - 2 bis A
     int kartenWerte[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
                          2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
                          2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
@@ -61,9 +69,10 @@ void blackjack() {
     int spielerAnzahl = 1;
     int spielerKontostand = 1000;
     int spielerEinsatz;
-    int spielerStatus = 0; // noch im Spiel oder schon raus?
-    // 0 raus
-    // 1 im spiel
+    int spielerStatus = 1; // noch im Spiel oder schon raus?
+    // 0 raus - überkauft, verliert in jedem Fall
+    // 1 im spiel - kann noch ziehen
+    // 2 Nicht verloren - nichts geht mehr
     bool bedingung = true;
     int spielerBlatt[DECKGROESSE] = {0};
     int dealerBlatt[DECKGROESSE] = {0};
@@ -96,9 +105,11 @@ void blackjack() {
 
         // Anzeigen der Spielerkarten
         printSpielstand(spielerBlatt, &wertSpielerBlatt);
+        printf("\tSpieler\n\n");
 
         // Anzeigen der Dealerkarten
         printSpielstand(dealerBlatt, &wertDealerBlatt);
+        printf("\tDealer\n");
 
         // TODO Funktion erstellen
         // spielstandPruefen()
@@ -110,41 +121,73 @@ void blackjack() {
                 // gewonnen raus die runde, am ende auszahlen
                 // ausser dealer macht auch == 21
 
+
+        // spielstandPruefen()
+            // WENN spielerBlatt > 21
+                // verloren geld weg raus die runde
+                // spielerKontostand -= spielereinsatz
+                // spielereinsatz = 0
+                // spielerStatus = 0;
+            // WENN SONST (spielerBlatt == 21)
+                // gewonnen raus die runde, am ende auszahlen
+                // ausser dealer macht auch == 21
+                // spielerStatus = 2
+            // WENN SONST (spielerBlatt < 21)
+                // optionen wieder anzeigen
+                // spielerStatus = 1 bleibt
+
         // nun haben alle spieler ausser die mit blackjack oder zu viel, 4 optionen
-        printf("\nWas möchtest du jetzt machen?\n\n");
 
-        printf("[1] Karte\n");
-        printf("[2] Halten\n");
-        printf("[3] Verdoppeln\n");
+        // Hier brauche ich eine Schleife um bei spielersStatus = 1
+        // wieder die Optionen anzuzeigen
 
-        // [1] Karte
-            // Der spieler bekommt noch eine karte
-            // spielerBLatt + zufallskarte (oder die vom ende des arrays)
-            // spielstandPruefen()
-                // WENN spielerBlatt > 21
-                    // verloren geld weg raus die runde
-                    // spielerKontostand -= spielereinsatz
-                    // spielereinsatz = 0
-                // WENN SONST (spielerBlatt == 21)
-                    // gewonnen raus die runde, am ende auszahlen
-                    // ausser dealer macht auch == 21
-                // WENN SONST (spielerBlatt < 21)
-                    // optionen wieder anzeigen
+        while (spielerStatus == 1) {
 
-        // [2] Halten
-            // weiter zum nächsten spieler
+            printf("\nWas möchtest du jetzt machen?\n\n");
 
-        // [3] Verdoppeln
-            // spielerEinsatz * 2
-            // 1 Einzige weitere Karte
-            // spielstandPruefen()
-                // WENN spielerBlatt > 21
-                    // verloren geld weg raus die runde
-                    // spielerKontostand -= spielereinsatz
-                    // spielereinsatz = 0
-                // WENN SONST (spielerBlatt == 21)
-                    // gewonnen raus die runde, am ende auszahlen
-                    // ausser dealer macht auch == 21
+            printf("[1] Karte\n");
+            printf("[2] Halten\n");
+            printf("[3] Verdoppeln\n");
+
+            int optionAuswahl;
+            printf("\nTriff ein Wahl: ");
+            scanf(" %1d", &optionAuswahl);
+            printf("\n");
+            ioBufferLeeren();
+
+            switch(optionAuswahl) {
+
+            case 1:
+                // Karte
+                spielerBlatt[spielerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
+                break;
+            case 2:
+                // Halten
+                // weiter zum nächsten spieler
+                spielerStatus = 2;
+                break;
+            case 3:
+                // Verdoppeln
+                // 1 Einzige weitere Karte
+                spielerEinsatz *= 2;
+                spielerBlatt[spielerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
+                spielerStatus = 2;
+                break;
+            }
+
+            bildschirmLeeren();
+            printf("\n");
+            // Anzeigen der Spielerkarten
+            printSpielstand(spielerBlatt, &wertSpielerBlatt);
+            printf("\tSpieler\n\n");
+
+            // Anzeigen der Dealerkarten
+            printSpielstand(dealerBlatt, &wertDealerBlatt);
+            printf("\tDealer\n");
+
+        }
+
+
 
         // [4] Teilen - mh lass ich vlt. weg
 
@@ -152,9 +195,11 @@ void blackjack() {
         // dealer deckt verdeckte karte auf
 
         // WENN dealerBlatt == 21
-            // alle verloren ausser unentschiden bei spielerBlatt == 21
+            // alle verloren ausser unentschieden bei spielerBlatt == 21
+            // bei spielerStatus = 2
         // WENN SONST dealerblatt > 21
             // Dealer verliert, alle spieler die nicht spielerBlatt > 21 haben gewonnen
+            // spielerStatus = 2;
         // WENN SONST dealerblatt < 16
             // Dealer nimmt 1 Karte
             // Dann wieder von vorne prüfen
@@ -169,12 +214,16 @@ void blackjack() {
         printf("\nMöchtest du noch einmal spielen? (j/n)\n");
         bedingung = jaOderNeinAbfrage();
         if (bedingung) {
-            // spielerblatt & dealerBlatt = 0
-            //spielerBlatt = 0;
-            //dealerBlatt = 0;
-            // Array wieder komplettieren und mischen
+            wertSpielerBlatt = 0;
+            wertDealerBlatt = 0;
+            spielerStatus = 1;
+            arrayNullen(spielerBlatt);
+            arrayNullen(dealerBlatt);
+            arrayGroesse = DECKGROESSE;
+            kartenDeckMischen(kartenDeck);
+            spielerKartenAnzahl = 0;
+            dealerKartenAnzahl = 0;
             // spielerAnzahl = 0
-            // spielerStatus = 0
         }
         bildschirmLeeren();
     }

@@ -21,7 +21,7 @@ int hauptMenu() {
         printf("[0] Zum Beenden des Programms\n");
 
 
-        printf("\nGibt einfach die Zahl des gewünschten Spiels ein "
+        printf("\nGib einfach die Zahl des gewünschten Spiels ein "
                "und drücke die Enter Taste: ");
 
         scanf("%1d", &spielAuswahl);
