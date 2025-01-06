@@ -3,7 +3,8 @@
 #include <string.h>
 #include "eigenefunktionen.h"
 
-
+#define DECKGROESSE 52
+//const int DECKGROESSE = 52;
 
 // Der Fisher-Yates-Algorithmus
 void kartenDeckMischen(int deck[]) {
@@ -27,10 +28,23 @@ int zieheKarte(int deck[], int *groesse) {
 }
 
 
+static void printSpielstand(int blatt[], int *blattWert) {
+
+    // Anzeigen der Spielerkarten
+    for (int i = 0; i < DECKGROESSE; i++) {
+        if (blatt[i] != 0) {
+
+        *blattWert += blatt[i];
+        printf("%d ", blatt[i]);
+        }
+    }
+    printf("\n[%d]\n", *blattWert);
+}
+
+
 void blackjack() {
 
     // Array mit 52 karten - 2 bis A
-    const int DECKGROESSE = 52;
     int kartenWerte[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
                          2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
                          2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
@@ -51,10 +65,12 @@ void blackjack() {
     // 0 raus
     // 1 im spiel
     bool bedingung = true;
-    int spielerBlatt[DECKGROESSE];
-    int dealerBlatt[DECKGROESSE];
+    int spielerBlatt[DECKGROESSE] = {0};
+    int dealerBlatt[DECKGROESSE] = {0};
     int spielerKartenAnzahl = 0;
     int dealerKartenAnzahl = 0;
+    int wertSpielerBlatt = 0;
+    int wertDealerBlatt = 0;
 
 
     while (bedingung) {
@@ -66,19 +82,23 @@ void blackjack() {
 
 
         printf("Bitte mach deinen Einsatz: ");
-        scanf("%10d", &spielerEinsatz);
+        scanf(" %10d", &spielerEinsatz);
         ioBufferLeeren();
+        printf("\n");
 
 
         // jedem spieler werden 2 karten vom ende des arrays zugewiesen
-            // spielerBlatt muss ein Array sein dem die aktuellen spielerkarten hinzugefügt werden
-        int test = zieheKarte(kartenDeck, &arrayGroesse);
-
-
         // dem dealer eine offene und eine verdeckte
-            // dealerBlatt muss ein Array sein dem die aktuellen spielerkarten hinzugefügt werden
+        spielerBlatt[spielerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
+        dealerBlatt[dealerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
+        spielerBlatt[spielerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
+        dealerBlatt[dealerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
 
-        // alle zugewiesenen karten müssen aus dem array entfernt werden
+        // Anzeigen der Spielerkarten
+        printSpielstand(spielerBlatt, &wertSpielerBlatt);
+
+        // Anzeigen der Dealerkarten
+        printSpielstand(dealerBlatt, &wertDealerBlatt);
 
         // TODO Funktion erstellen
         // spielstandPruefen()
