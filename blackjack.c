@@ -27,7 +27,7 @@ int zieheKarte(int deck[], int *groesse) {
 }
 
 
-static void printSpielstand(int blatt[], int *blattWert) {
+static void printSpielstand(int blatt[], int *blattWert, int isDealer) {
 
     *blattWert = 0;
     printf("\t");
@@ -36,11 +36,18 @@ static void printSpielstand(int blatt[], int *blattWert) {
         if (blatt[i] != 0) {
 
             *blattWert += blatt[i];
-            printf("%d ", blatt[i]);
+            if (isDealer == 1 && i == 1) {
+                printf("%c ", 'X');
+            } else {
+                printf("%d ", blatt[i]);
+            }
         }
     }
-    printf("\n\t[%d]\n", *blattWert);
-
+    if (isDealer == 1) {
+        printf("\n\t[%c]\n", 'X');
+    } else {
+        printf("\n\t[%d]\n", *blattWert);
+    }
 }
 
 
@@ -50,6 +57,32 @@ void arrayNullen(int *blattArray) {
         blattArray[i] = 0;
     }
 }
+
+
+void spielstandPruefen(int wert, int *konto, int *einsatz, int *status) {
+
+    if (wert > 21) {
+        // verloren geld weg raus die runde
+        *konto -= *einsatz;
+        *einsatz = 0;
+        *status = 0;
+        printf("\nKartenwert zu hoch, du hast die Runde verloren.\n");
+        printf("Drücke die Enter-Taste zum weitermachen... ");
+        getchar();
+    } else if (wert == 21) {
+        // gewonnen raus die runde, am ende auszahlen
+        // ausser dealer macht auch == 21
+        *status = 2;
+        printf("Glückwunsch! Du hast 21 erreicht.\n");
+        printf("Du kannst keine weiteren Karten mehr ziehen.\n");
+        printf("Drücke die Enter-Taste zum weitermachen... ");
+        getchar();
+    } else if (wert < 21) {
+        // optionen wieder anzeigen
+        // spielerStatus = 1 bleibt
+    }
+}
+
 
 void blackjack() {
 
@@ -86,15 +119,23 @@ void blackjack() {
 
         bildschirmLeeren();
 
-        printf("Du hast noch 1000 € in der Tasche.\n");
+        printf("Du hast noch %d € in der Tasche.\n", spielerKontostand);
         // EINGABE: spieleranzahl - max 3
 
+        do {
+            int temp = 0;
+            printf("Bitte mach deinen Einsatz: ");
+            scanf(" %10d", &temp);
+            ioBufferLeeren();
+            printf("\n");
 
-        printf("Bitte mach deinen Einsatz: ");
-        scanf(" %10d", &spielerEinsatz);
-        ioBufferLeeren();
-        printf("\n");
-
+            if (temp > spielerKontostand) {
+                printf("Soviel hast du nicht mehr.\n");
+            } else {
+                spielerEinsatz = temp;
+                break;
+            }
+        } while (true);
 
         // jedem spieler werden 2 karten vom ende des arrays zugewiesen
         // dem dealer eine offene und eine verdeckte
@@ -104,43 +145,16 @@ void blackjack() {
         dealerBlatt[dealerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
 
         // Anzeigen der Spielerkarten
-        printSpielstand(spielerBlatt, &wertSpielerBlatt);
+        printSpielstand(spielerBlatt, &wertSpielerBlatt, 0);
         printf("\tSpieler\n\n");
 
         // Anzeigen der Dealerkarten
-        printSpielstand(dealerBlatt, &wertDealerBlatt);
+        printSpielstand(dealerBlatt, &wertDealerBlatt, 1);
         printf("\tDealer\n");
 
-        // TODO Funktion erstellen
-        // spielstandPruefen()
-            // WENN spielerBlatt > 21
-                // verloren geld weg raus die runde
-                // spielerKontostand -= spielerEinsatz;
-                // spielerEinsatz = 0;
-            // WENN SONST (spielerBlatt == 21)
-                // gewonnen raus die runde, am ende auszahlen
-                // ausser dealer macht auch == 21
+        spielstandPruefen(wertSpielerBlatt, &spielerKontostand, &spielerEinsatz, &spielerStatus);
 
-
-        // spielstandPruefen()
-            // WENN spielerBlatt > 21
-                // verloren geld weg raus die runde
-                // spielerKontostand -= spielereinsatz
-                // spielereinsatz = 0
-                // spielerStatus = 0;
-            // WENN SONST (spielerBlatt == 21)
-                // gewonnen raus die runde, am ende auszahlen
-                // ausser dealer macht auch == 21
-                // spielerStatus = 2
-            // WENN SONST (spielerBlatt < 21)
-                // optionen wieder anzeigen
-                // spielerStatus = 1 bleibt
-
-        // nun haben alle spieler ausser die mit blackjack oder zu viel, 4 optionen
-
-        // Hier brauche ich eine Schleife um bei spielersStatus = 1
-        // wieder die Optionen anzuzeigen
-
+        // Nun haben alle spieler ausser die mit blackjack || > 21 , 4 Optionen
         while (spielerStatus == 1) {
 
             printf("\nWas möchtest du jetzt machen?\n\n");
@@ -178,13 +192,14 @@ void blackjack() {
             bildschirmLeeren();
             printf("\n");
             // Anzeigen der Spielerkarten
-            printSpielstand(spielerBlatt, &wertSpielerBlatt);
+            printSpielstand(spielerBlatt, &wertSpielerBlatt, 0);
             printf("\tSpieler\n\n");
 
             // Anzeigen der Dealerkarten
-            printSpielstand(dealerBlatt, &wertDealerBlatt);
+            printSpielstand(dealerBlatt, &wertDealerBlatt, 1);
             printf("\tDealer\n");
 
+            spielstandPruefen(wertSpielerBlatt, &spielerKontostand, &spielerEinsatz, &spielerStatus);
         }
 
 
@@ -210,10 +225,10 @@ void blackjack() {
             // Spieler ist dauerhaft aus dem Spiel
 
 
-        pauseProgramm(2);
-        printf("\nMöchtest du noch einmal spielen? (j/n)\n");
-        bedingung = jaOderNeinAbfrage();
-        if (bedingung) {
+//        pauseProgramm(2);
+//        printf("\nMöchtest du noch einmal spielen? (j/n)\n");
+//        bedingung = jaOderNeinAbfrage();
+//        if (bedingung) {
             wertSpielerBlatt = 0;
             wertDealerBlatt = 0;
             spielerStatus = 1;
@@ -223,9 +238,9 @@ void blackjack() {
             kartenDeckMischen(kartenDeck);
             spielerKartenAnzahl = 0;
             dealerKartenAnzahl = 0;
-            // spielerAnzahl = 0
-        }
-        bildschirmLeeren();
+//            // spielerAnzahl = 0
+//        }
+        //bildschirmLeeren();
     }
 }
 
