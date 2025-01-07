@@ -5,6 +5,13 @@
 
 #define DECKGROESSE 52
 
+enum Status {
+    VERLOREN,
+    IM_SPIEL,
+    NICHTS_GEHT_MEHR,
+    GEWONNEN
+};
+
 // Der Fisher-Yates-Algorithmus
 void kartenDeckMischen(int deck[]) {
 
@@ -59,22 +66,19 @@ void arrayNullen(int *blattArray) {
 }
 
 
-void spielstandPruefen(int wert, int *konto, int *einsatz, int *status) {
+void spielstandPruefen(int wert, enum Status *spielerStatus) {
 
     if (wert > 21) {
-        // verloren geld weg raus die runde
-        *konto -= *einsatz;
-        *einsatz = 0;
-        *status = 0;
+        *spielerStatus = VERLOREN;
         printf("\nKartenwert zu hoch, du hast die Runde verloren.\n");
         printf("Drücke die Enter-Taste zum weitermachen... ");
         getchar();
     } else if (wert == 21) {
         // gewonnen raus die runde, am ende auszahlen
         // ausser dealer macht auch == 21
-        *status = 2;
-        printf("Glückwunsch! Du hast 21 erreicht.\n");
-        printf("Du kannst keine weiteren Karten mehr ziehen.\n");
+        *spielerStatus = NICHTS_GEHT_MEHR;
+        printf("\nGlückwunsch! Du hast 21 erreicht.\n");
+        printf("Du kannst keine weiteren Karten mehr ziehen.\n\n");
         printf("Drücke die Enter-Taste zum weitermachen... ");
         getchar();
     } else if (wert < 21) {
@@ -102,7 +106,8 @@ void blackjack() {
     int spielerAnzahl = 1;
     int spielerKontostand = 1000;
     int spielerEinsatz;
-    int spielerStatus = 1; // noch im Spiel oder schon raus?
+    enum Status spielerStatus = IM_SPIEL;
+    //int spielerStatus = 1; // noch im Spiel oder schon raus?
     // 0 raus - überkauft, verliert in jedem Fall
     // 1 im spiel - kann noch ziehen
     // 2 Nicht verloren - nichts geht mehr
@@ -111,8 +116,8 @@ void blackjack() {
     int dealerBlatt[DECKGROESSE] = {0};
     int spielerKartenAnzahl = 0;
     int dealerKartenAnzahl = 0;
-    int wertSpielerBlatt = 0;
-    int wertDealerBlatt = 0;
+    int spielerBlattWert = 0;
+    int dealerBlattWert = 0;
 
 
     while (bedingung) {
@@ -145,17 +150,17 @@ void blackjack() {
         dealerBlatt[dealerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
 
         // Anzeigen der Spielerkarten
-        printSpielstand(spielerBlatt, &wertSpielerBlatt, 0);
+        printSpielstand(spielerBlatt, &spielerBlattWert, 0);
         printf("\tSpieler\n\n");
 
         // Anzeigen der Dealerkarten
-        printSpielstand(dealerBlatt, &wertDealerBlatt, 1);
+        printSpielstand(dealerBlatt, &dealerBlattWert, 1);
         printf("\tDealer\n");
 
-        spielstandPruefen(wertSpielerBlatt, &spielerKontostand, &spielerEinsatz, &spielerStatus);
+        spielstandPruefen(spielerBlattWert, &spielerStatus);
 
         // Nun haben alle spieler ausser die mit blackjack || > 21 , 4 Optionen
-        while (spielerStatus == 1) {
+        while (spielerStatus == IM_SPIEL) {
 
             printf("\nWas möchtest du jetzt machen?\n\n");
 
@@ -178,47 +183,116 @@ void blackjack() {
             case 2:
                 // Halten
                 // weiter zum nächsten spieler
-                spielerStatus = 2;
+                spielerStatus = NICHTS_GEHT_MEHR;
                 break;
             case 3:
                 // Verdoppeln
                 // 1 Einzige weitere Karte
                 spielerEinsatz *= 2;
                 spielerBlatt[spielerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
-                spielerStatus = 2;
+                spielerStatus = NICHTS_GEHT_MEHR;
                 break;
             }
 
             bildschirmLeeren();
             printf("\n");
             // Anzeigen der Spielerkarten
-            printSpielstand(spielerBlatt, &wertSpielerBlatt, 0);
+            printSpielstand(spielerBlatt, &spielerBlattWert, 0);
             printf("\tSpieler\n\n");
 
             // Anzeigen der Dealerkarten
-            printSpielstand(dealerBlatt, &wertDealerBlatt, 1);
+            printSpielstand(dealerBlatt, &dealerBlattWert, 1);
             printf("\tDealer\n");
 
-            spielstandPruefen(wertSpielerBlatt, &spielerKontostand, &spielerEinsatz, &spielerStatus);
+            spielstandPruefen(spielerBlattWert, &spielerStatus);
         }
 
 
 
         // [4] Teilen - mh lass ich vlt. weg
 
+
         // alle spieler waren dran
-        // dealer deckt verdeckte karte auf
+        bildschirmLeeren();
+        printf("Aller Spieler haben Ihren Zug beendet.\n");
+        printf("Der Dealer ist dran und zeigt seine verdeckte Karte.\n\n");
 
-        // WENN dealerBlatt == 21
-            // alle verloren ausser unentschieden bei spielerBlatt == 21
-            // bei spielerStatus = 2
-        // WENN SONST dealerblatt > 21
-            // Dealer verliert, alle spieler die nicht spielerBlatt > 21 haben gewonnen
-            // spielerStatus = 2;
-        // WENN SONST dealerblatt < 16
-            // Dealer nimmt 1 Karte
-            // Dann wieder von vorne prüfen
+        bool geprueft = false;
+        do {
 
+            printSpielstand(spielerBlatt, &spielerBlattWert, 0);
+            printf("\tSpieler\n\n");
+
+            // dealer deckt verdeckte karte auf
+            printSpielstand(dealerBlatt, &dealerBlattWert, 0);
+            printf("\tDealer\n\n");
+
+
+            if (dealerBlattWert == 21) {
+                geprueft = true;
+                printf("Der Dealer hat 21, Rundenende.\n");
+                spielerStatus = (spielerBlattWert == 21) ? IM_SPIEL : VERLOREN;
+
+            } else if (dealerBlattWert > 21) {
+                geprueft = true;
+                printf("Der Dealer hat sich überkauft.\n");
+                printf("Alle Spieler mit einem Blatt bis 21 haben gewonnen.\n");
+                spielerStatus = (spielerBlattWert <= 21) ? GEWONNEN : VERLOREN;
+
+            } else if (dealerBlattWert <= 16) {
+                printf("Der Dealer nimmt noch eine Karte.\n\n");
+                dealerBlatt[dealerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
+
+            } else {
+                // Der Dealer hat einen Blattwert >= 16 && <= 21
+                geprueft = true;
+
+                if (spielerBlattWert > 21)
+                    spielerStatus = VERLOREN;
+                else if (spielerBlattWert > dealerBlattWert)
+                    spielerStatus = GEWONNEN;
+                else if (spielerBlattWert == dealerBlattWert)
+                    spielerStatus = IM_SPIEL;
+                else
+                    spielerStatus = VERLOREN;
+
+                printf("Runde beendet.\n");
+                printf("Es folgt die Auswertung.\n\n");
+
+            }
+            getchar();
+            bildschirmLeeren();
+        } while (!geprueft);
+
+
+        printf("Dein Blatt: %d\n", spielerBlattWert);
+        printf("Blatt des Dealers: %d\n\n", dealerBlattWert);
+        printf("Dein Einsatz war: %d €\n", spielerEinsatz);
+
+        switch (spielerStatus) {
+            case GEWONNEN:
+                printf("Glückwunsch, du hast diese Runde gewonnen! :)\n");
+                spielerKontostand += spielerEinsatz;
+                break;
+            case VERLOREN:
+                printf("Du hast leider verloren :(\n");
+                spielerKontostand -= spielerEinsatz;
+                break;
+            case IM_SPIEL:
+                if (spielerBlattWert > dealerBlattWert) {
+                    printf("Glückwunsch, du hast diese Runde gewonnen! :)\n");
+                    spielerKontostand += spielerEinsatz;
+                } else if (spielerBlattWert == dealerBlattWert) {
+                    printf("Unentschieden, nicht gewonnen, nichts verloren.\n");
+                } else {
+                    printf("Du hast leider verloren :(\n");
+                    spielerKontostand -= spielerEinsatz;
+                }
+                break;
+        }
+
+        printf("Neuer Kontostand: %d €\n", spielerKontostand);
+        getchar();
         // Rundenende
 
         // WENN spielerkonto <= 0
@@ -229,9 +303,9 @@ void blackjack() {
 //        printf("\nMöchtest du noch einmal spielen? (j/n)\n");
 //        bedingung = jaOderNeinAbfrage();
 //        if (bedingung) {
-            wertSpielerBlatt = 0;
-            wertDealerBlatt = 0;
-            spielerStatus = 1;
+            spielerBlattWert = 0;
+            dealerBlattWert = 0;
+            spielerStatus = IM_SPIEL;
             arrayNullen(spielerBlatt);
             arrayNullen(dealerBlatt);
             arrayGroesse = DECKGROESSE;

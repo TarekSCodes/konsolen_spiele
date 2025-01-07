@@ -68,3 +68,7 @@ obj/
 # Betriebssystemspezifische Dateien
 .DS_Store
 Thumbs.db
+
+# VSCode
+.editorconfig
+tasks.json
