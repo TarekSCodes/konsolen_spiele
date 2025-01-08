@@ -12,6 +12,28 @@ enum Status {
     GEWONNEN
 };
 
+
+void einsatzFestlegen(int *konto, int *einsatz) {
+
+    printf("Du hast noch %d € in der Tasche.\n", *konto);
+
+    do {
+        int temp = 0;
+        printf("Bitte mach deinen Einsatz: ");
+        scanf(" %10d", &temp);
+        ioBufferLeeren();
+        printf("\n");
+
+        if (temp > *konto) {
+            printf("Soviel hast du nicht mehr.\n");
+        } else {
+            *einsatz = temp;
+            break;
+        }
+    } while (true);
+}
+
+
 // Der Fisher-Yates-Algorithmus
 void kartenDeckMischen(int deck[]) {
 
@@ -124,23 +146,7 @@ void blackjack() {
 
         bildschirmLeeren();
 
-        printf("Du hast noch %d € in der Tasche.\n", spielerKontostand);
-        // EINGABE: spieleranzahl - max 3
-
-        do {
-            int temp = 0;
-            printf("Bitte mach deinen Einsatz: ");
-            scanf(" %10d", &temp);
-            ioBufferLeeren();
-            printf("\n");
-
-            if (temp > spielerKontostand) {
-                printf("Soviel hast du nicht mehr.\n");
-            } else {
-                spielerEinsatz = temp;
-                break;
-            }
-        } while (true);
+        einsatzFestlegen(&spielerKontostand, &spielerEinsatz);
 
         // jedem spieler werden 2 karten vom ende des arrays zugewiesen
         // dem dealer eine offene und eine verdeckte
