@@ -17,7 +17,7 @@ int hauptMenu() {
         printf("[2] Tic-Tac-Toe\n");
         printf("[3] Schere-Stein-Papier\n");
         printf("[4] Zahlenraten\n");
-        printf("[5] Work in Progress\n");
+        printf("[5] Blackjack\n");
         printf("[0] Zum Beenden des Programms\n");
 
 
