@@ -110,6 +110,69 @@ void spielstandPruefen(int wert, enum Status *spielerStatus) {
 }
 
 
+void spielerAktionen(
+    enum Status *spielerStatus,
+    int *spielerBlatt,
+    int *spielerKartenAnzahl,
+    int *kartenDeck,
+    int *arrayGroesse,
+    int *spielerEinsatz,
+    int *spielerBlattWert,
+    int *dealerBlatt,
+    int *dealerBlattWert) {
+
+    while (*spielerStatus == IM_SPIEL) {
+
+        printf("\nWas möchtest du jetzt machen?\n\n");
+
+        printf("[1] Karte\n");
+        printf("[2] Halten\n");
+        printf("[3] Verdoppeln\n");
+
+        int optionAuswahl;
+        printf("\nTriff ein Wahl: ");
+        scanf(" %1d", &optionAuswahl);
+        printf("\n");
+        ioBufferLeeren();
+
+        switch(optionAuswahl) {
+
+            case 1:
+                // Karte
+                spielerBlatt[(*spielerKartenAnzahl)++] = zieheKarte(kartenDeck, arrayGroesse);
+                break;
+            case 2:
+                // Halten
+                // weiter zum nächsten spieler
+                *spielerStatus = NICHTS_GEHT_MEHR;
+                break;
+            case 3:
+                // Verdoppeln
+                // 1 Einzige weitere Karte
+                *spielerEinsatz *= 2;
+                spielerBlatt[(*spielerKartenAnzahl)++] = zieheKarte(kartenDeck, arrayGroesse);
+                *spielerStatus = NICHTS_GEHT_MEHR;
+                break;
+            default:
+                printf("Ungültige Option. Bitte wähle erneut.\n");
+                break;
+            }
+
+        bildschirmLeeren();
+        printf("\n");
+        // Anzeigen der Spielerkarten
+        printSpielstand(spielerBlatt, spielerBlattWert, 0);
+        printf("\tSpieler\n\n");
+
+        // Anzeigen der Dealerkarten
+        printSpielstand(dealerBlatt, dealerBlattWert, 1);
+        printf("\tDealer\n");
+
+        spielstandPruefen(*spielerBlattWert, spielerStatus);
+    }
+}
+
+
 void blackjack() {
 
     int kartenWerte[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
@@ -129,10 +192,6 @@ void blackjack() {
     int spielerKontostand = 1000;
     int spielerEinsatz;
     enum Status spielerStatus = IM_SPIEL;
-    //int spielerStatus = 1; // noch im Spiel oder schon raus?
-    // 0 raus - überkauft, verliert in jedem Fall
-    // 1 im spiel - kann noch ziehen
-    // 2 Nicht verloren - nichts geht mehr
     bool bedingung = true;
     int spielerBlatt[DECKGROESSE] = {0};
     int dealerBlatt[DECKGROESSE] = {0};
@@ -166,57 +225,11 @@ void blackjack() {
         spielstandPruefen(spielerBlattWert, &spielerStatus);
 
         // Nun haben alle spieler ausser die mit blackjack || > 21 , 4 Optionen
-        while (spielerStatus == IM_SPIEL) {
-
-            printf("\nWas möchtest du jetzt machen?\n\n");
-
-            printf("[1] Karte\n");
-            printf("[2] Halten\n");
-            printf("[3] Verdoppeln\n");
-
-            int optionAuswahl;
-            printf("\nTriff ein Wahl: ");
-            scanf(" %1d", &optionAuswahl);
-            printf("\n");
-            ioBufferLeeren();
-
-            switch(optionAuswahl) {
-
-            case 1:
-                // Karte
-                spielerBlatt[spielerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
-                break;
-            case 2:
-                // Halten
-                // weiter zum nächsten spieler
-                spielerStatus = NICHTS_GEHT_MEHR;
-                break;
-            case 3:
-                // Verdoppeln
-                // 1 Einzige weitere Karte
-                spielerEinsatz *= 2;
-                spielerBlatt[spielerKartenAnzahl++] = zieheKarte(kartenDeck, &arrayGroesse);
-                spielerStatus = NICHTS_GEHT_MEHR;
-                break;
-            }
-
-            bildschirmLeeren();
-            printf("\n");
-            // Anzeigen der Spielerkarten
-            printSpielstand(spielerBlatt, &spielerBlattWert, 0);
-            printf("\tSpieler\n\n");
-
-            // Anzeigen der Dealerkarten
-            printSpielstand(dealerBlatt, &dealerBlattWert, 1);
-            printf("\tDealer\n");
-
-            spielstandPruefen(spielerBlattWert, &spielerStatus);
-        }
-
+        spielerAktionen(&spielerStatus, spielerBlatt, &spielerKartenAnzahl, kartenDeck,
+                        &arrayGroesse, &spielerEinsatz, &spielerBlattWert, dealerBlatt, &dealerBlattWert);
 
 
         // [4] Teilen - mh lass ich vlt. weg
-
 
         // alle spieler waren dran
         bildschirmLeeren();
