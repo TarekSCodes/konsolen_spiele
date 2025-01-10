@@ -146,8 +146,7 @@ void spielerAktionen(
     int *spielerEinsatz,
     int *spielerBlattWert,
     int *dealerBlatt,
-    int *dealerBlattWert)
-{
+    int *dealerBlattWert) {
 
     while (*spielerStatus == IM_SPIEL)
     {
@@ -211,8 +210,8 @@ void spieleDealerRunde(
     enum Status *spielerStatus,
     int *dealerKartenAnzahl,
     int *kartenDeck,
-    int *arrayGroesse)
-{
+    int *arrayGroesse) {
+
     bool geprueft = false;
     do
     {
@@ -272,8 +271,7 @@ werteRundenErgebnisAus(
     int *spielerKontostand,
     int *spielerEinsatz,
     int *spielerBlattWert,
-    int *dealerBlattWert)
-{
+    int *dealerBlattWert) {
 
     switch (*spielerStatus)
     {
@@ -305,8 +303,7 @@ werteRundenErgebnisAus(
 }
 
 
-void blackjack()
-{
+void blackjack() {
 
     int kartenWerte[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
                          2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11,
@@ -387,13 +384,15 @@ void blackjack()
 
         // Rundenende
         // WENN spielerkonto <= 0
-        // Spieler ist dauerhaft aus dem Spiel
+        if (spielerKontostand <= 0) {
+            pauseProgramm(2);
+            printf("Du bist Pleite, das Spiel ist zu Ende.\n");
+            printf("\nMöchtest du noch einmal spielen? (j/n)\n");
+            bedingung = jaOderNeinAbfrage();
+            spielerKontostand = 1000;
+        }
 
 
-//        pauseProgramm(2);
-//        printf("\nMöchtest du noch einmal spielen? (j/n)\n");
-//        bedingung = jaOderNeinAbfrage();
-//        if (bedingung) {
         spielerBlattWert = 0;
         dealerBlattWert = 0;
         spielerStatus = IM_SPIEL;
@@ -403,9 +402,6 @@ void blackjack()
         kartenDeckMischen(kartenDeck);
         spielerKartenAnzahl = 0;
         dealerKartenAnzahl = 0;
-//            // spielerAnzahl = 0
-//        }
-        //bildschirmLeeren();
     }
 }
 
