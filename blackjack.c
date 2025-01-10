@@ -5,8 +5,7 @@
 
 #define DECKGROESSE 52
 
-enum Status
-{
+enum Status {
     VERLOREN,
     IM_SPIEL,
     NICHTS_GEHT_MEHR,
@@ -14,8 +13,7 @@ enum Status
 };
 
 
-void einsatzFestlegen(int *konto, int *einsatz)
-{
+void einsatzFestlegen(int *konto, int *einsatz) {
 
     printf("Du hast noch %d € in der Tasche.\n", *konto);
 
@@ -23,7 +21,12 @@ void einsatzFestlegen(int *konto, int *einsatz)
     {
         int temp = 0;
         printf("Bitte mach deinen Einsatz: ");
-        scanf(" %10d", &temp);
+        if(scanf(" %10d", &temp) != 1) {
+            bildschirmLeeren();
+            printf("Ungültige Eingabe. Bitte Zahl eingeben.\n");
+            ioBufferLeeren();
+            continue;
+        }
         ioBufferLeeren();
         printf("\n");
 
@@ -42,8 +45,7 @@ void einsatzFestlegen(int *konto, int *einsatz)
 
 
 // Der Fisher-Yates-Algorithmus
-void kartenDeckMischen(int deck[])
-{
+void kartenDeckMischen(int deck[]) {
 
     for (int i = DECKGROESSE - 1; i >= 1; i--)
     {
@@ -57,8 +59,7 @@ void kartenDeckMischen(int deck[])
 }
 
 
-int zieheKarte(int deck[], int *groesse)
-{
+int zieheKarte(int deck[], int *groesse) {
 
     int karte = deck[*groesse - 1];
     (*groesse)--;
@@ -66,8 +67,7 @@ int zieheKarte(int deck[], int *groesse)
 }
 
 
-static void printSpielstand(int blatt[], int *blattWert, int isDealer)
-{
+static void printSpielstand(int blatt[], int *blattWert, int isDealer) {
 
     *blattWert = 0;
     printf("\t");
@@ -99,8 +99,7 @@ static void printSpielstand(int blatt[], int *blattWert, int isDealer)
 }
 
 
-void arrayNullen(int *blattArray)
-{
+void arrayNullen(int *blattArray) {
 
     for (int i = 0; i < DECKGROESSE; i++)
     {
@@ -109,8 +108,7 @@ void arrayNullen(int *blattArray)
 }
 
 
-void spielstandPruefen(int wert, enum Status *spielerStatus)
-{
+void spielstandPruefen(int wert, enum Status *spielerStatus) {
 
     if (wert > 21)
     {
@@ -183,8 +181,15 @@ void spielerAktionen(
             *spielerStatus = NICHTS_GEHT_MEHR;
             break;
         default:
-            printf("Ungültige Option. Bitte wähle erneut.\n");
-            break;
+            bildschirmLeeren();
+            printf("Ungültige Option. Bitte wähle erneut.\n\n");
+            printSpielstand(spielerBlatt, spielerBlattWert, 0);
+            printf("\tSpieler\n\n");
+
+            // Anzeigen der Dealerkarten
+            printSpielstand(dealerBlatt, dealerBlattWert, 1);
+            printf("\tDealer\n");
+            continue;
         }
 
         bildschirmLeeren();
